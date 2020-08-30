@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "581621789019",
+    "firebase_url": "https://wallpaper-zone-6dcd1.firebaseio.com",
+    "project_id": "wallpaper-zone-6dcd1",
+    "storage_bucket": "wallpaper-zone-6dcd1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:581621789019:android:21d5893d94161ea442ea7e",
+        "android_client_info": {
+          "package_name": "com.example.wallpaperzone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "581621789019-9hg8e4iqfrj1hnj8mfo96a29h13pthmr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDD_dNwLKdxAkumVAwf8FAu-rpAYTEKqiY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "581621789019-9hg8e4iqfrj1hnj8mfo96a29h13pthmr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
