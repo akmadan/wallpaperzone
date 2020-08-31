@@ -3,10 +3,12 @@ import 'dart:typed_data';
 
 import 'dart:ui';
 
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:save_in_gallery/save_in_gallery.dart';
 
 import 'package:flutter/material.dart';
+const String testDevice = 'Mobile_ID';
 
 class Fullscreen extends StatefulWidget {
   final Uint8List image;
@@ -17,6 +19,59 @@ class Fullscreen extends StatefulWidget {
 }
 
 class _FullscreenState extends State<Fullscreen> {
+
+
+
+
+
+
+
+
+   static const MobileAdTargetingInfo  targetingInfo= MobileAdTargetingInfo(
+      testDevices: testDevice!=null ? <String>[testDevice]: null,
+      nonPersonalizedAds: true,
+      keywords: ['Games' , 'Pubg' , 'snapchat' , 'unity']
+  );
+
+
+
+
+
+
+
+   InterstitialAd myInterstitial = InterstitialAd(
+
+    adUnitId: "ca-app-pub-3937702122719326/6723205383",
+    targetingInfo: targetingInfo,
+    listener: (MobileAdEvent event) {
+      print("InterstitialAd event is $event");
+    },
+  );
+
+
+
+
+  @override
+  void dispose(){
+    myInterstitial.dispose();
+    super.dispose();
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   final _imageSaver = ImageSaver();
   bool _isLoading = false;
   bool _showResult = false;
@@ -31,23 +86,46 @@ class _FullscreenState extends State<Fullscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: Padding(padding: EdgeInsets.only(bottom: 50.0),
+      child: FloatingActionButton(
+
+        splashColor: Colors.grey,
+        backgroundColor: Colors.white,
+        onPressed: () {
+          Fluttertoast.showToast(
+              msg: "Saving in Gallery",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+              fontSize: 16.0);
+          saveNetworkImage();
+          myInterstitial
+            ..load()
+            ..show(
+              anchorType: AnchorType.bottom,
+              anchorOffset: 0.0,
+              horizontalCenterOffset: 0.0,
+            );
+        },
+        child: Icon(
+          Icons.save_alt,
+          color: Colors.black,
+        ),
+      )),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      backgroundColor: Color(000080),
       appBar: AppBar(
-        actions: [
-          IconButton(
-              icon: Icon(Icons.save),
-              onPressed: () {
-                Fluttertoast.showToast(
-                    msg: "Saving in Gallery",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.green,
-                    textColor: Colors.white,
-                    fontSize: 16.0);
-                saveNetworkImage();
-              })
-        ],
-        title: Text("Download"),
+        title: Text("Download",style: TextStyle(
+            fontFamily: "Roboto")),
+          flexibleSpace: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: <Color>[Colors.black, Color(000099)])),
+        ),
       ),
       body: Container(
         child: Center(child: Image.memory(widget.image)),

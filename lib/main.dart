@@ -1,18 +1,86 @@
 import 'dart:typed_data';
 import 'dart:ui';
-
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
 import 'package:flutter/material.dart';
 import 'package:wallpaperzone/data_holder.dart';
-
 import 'fullscreen.dart';
+const String testDevice = 'Mobile_ID';
 
 void main() => runApp(new MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  static const MobileAdTargetingInfo  targetingInfo= MobileAdTargetingInfo(
+      testDevices: testDevice!=null ? <String>[testDevice]: null,
+      nonPersonalizedAds: true,
+      keywords: ['Games' , 'Pubg' , 'snapchat' , 'unity']
+  );
+
+
+
+
+  BannerAd _bannerAd;
+  BannerAd createBannerAd(){
+    return BannerAd(
+        adUnitId: "ca-app-pub-3937702122719326/7872635529",
+        size: AdSize.smartBanner,
+        targetingInfo: targetingInfo,
+        listener: (MobileAdEvent event){
+          print("BannerAd $event");
+        }
+    );
+  }
+
+
+
+   @override
+  void initState() {
+    FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-3937702122719326~5438043873');
+    _bannerAd = createBannerAd()
+      ..load()
+      ..show();
+    super.initState();
+  }
+
+
+
+
+
+
+
+  @override
+  void dispose(){
+    _bannerAd.dispose();
+    super.dispose();
+  }
+
+
+
+
+
+
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -47,57 +115,31 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<String> category = [
-    'Abstract',
-    'Nature',
-    'Animals',
-    'Beach',
-    'Cute',
-    'Creative',
-    'Gaming',
-    'Black',
-    'Food',
-    'Love',
-    'Military',
-  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Wallpaper Zone"),
-        backgroundColor: Colors.black,
-      ),
-      body: Container(
-        child: makeGrid(),
-      ),
-      drawer: Theme(
-        data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
-        child: Drawer(
-          child: ListView.builder(
-            itemCount: category.length,
-            itemBuilder: (context, index) {
-              return Column(
-                children: [
-                  ListTile(
-                    title: Text(
-                      category[index],
-                      style: TextStyle(fontSize: 20.0),
-                    ),
-                  ),
-                  Divider()
-                ],
-              );
-            },
+
+        appBar: AppBar(
+          title: Text("4K Black Wallpapers" , style: TextStyle(
+            fontFamily: "Roboto"
+          ),),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: <Color>[Colors.black, Color(000099)])),
           ),
         ),
-      ),
-    );
+        body: Padding(padding: EdgeInsets.only(bottom: 50.0),
+        child: Container(
+            child: makeGrid())));
   }
 
   Widget makeGrid() {
     return GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
+       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
             childAspectRatio: 2.5 / 4,
             crossAxisSpacing: 2.0,
             mainAxisSpacing: 2.0),
@@ -119,15 +161,12 @@ class ImageGridItem extends StatefulWidget {
 class _ImageGridItemState extends State<ImageGridItem> {
   Uint8List imageFile;
   String url;
-  StorageReference photoref = FirebaseStorage.instance.ref().child('gaming');
+  StorageReference photoref = FirebaseStorage.instance.ref().child('black');
 
   int max_size = 10 * 1024 * 1024;
   getImage() {
     if (!requestIndex.contains(widget._index)) {
-      photoref
-          .child("image_${widget._index}.jpg")
-          .getData(max_size)
-          .then((data) {
+      photoref.child("1(${widget._index}).jpg").getData(max_size).then((data) {
         this.setState(() {
           imageFile = data;
         });
@@ -140,7 +179,7 @@ class _ImageGridItemState extends State<ImageGridItem> {
   }
 
   getImageUrl() {
-    photoref.child("image_${widget._index}.jpg").getDownloadURL().then((data) {
+    photoref.child("1(${widget._index}).jpg").getDownloadURL().then((data) {
       this.setState(() {
         url = data;
       });
@@ -150,23 +189,28 @@ class _ImageGridItemState extends State<ImageGridItem> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => Fullscreen(
-                        image: imageFile,
-                      )));
-        },
-        child: GridTile(child: decideGridTile()));
+    return GridTile(child: decideGridTile());
   }
 
   Widget decideGridTile() {
     if (imageFile == null) {
-      return Center(child: Text("Loading"));
+      return Center(
+        child: Image.asset(
+          'assets/default.jpg',
+          fit: BoxFit.cover,
+        ),
+      );
     } else {
-      return Image.memory(imageFile, fit: BoxFit.cover);
+      return GestureDetector(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Fullscreen(
+                          image: imageFile,
+                        )));
+          },
+          child: Image.memory(imageFile, fit: BoxFit.cover));
     }
   }
 
